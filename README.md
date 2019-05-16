@@ -1,2 +1,2 @@
 # Snake
-A snake game
+A snake game made in Python
