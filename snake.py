@@ -5,11 +5,16 @@ import tkinter as tk
 from tkinter import messagebox
 
 
+BLACK = (0,0,0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+
+
 class cube(object): 
 	row = 0
 	width = 0
 
-	def __init__(self, start, dirnx = 1, dirny = 0, color = (255, 0, 0)):
+	def __init__(self, start, dirnx = 1, dirny = 0, color = RED):
 		pass
 	
 	def move(self, dirnx, dirny):
@@ -18,10 +23,12 @@ class cube(object):
 	def draw(self, surface, eyes = False): 
 		pass
 
+#snake object made of cube objects
 class snake(object):
 	body = []
 	turns = {}
 
+	#initializes the snake
 	def __init__(self, color, pos):
 		self.color = color
 		self.head = cube(pos)
@@ -30,6 +37,7 @@ class snake(object):
 		self.dirnx = 0
 		self.dirny = 1
 	
+	#moves the snake with turns 
 	def move(self):
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -54,12 +62,39 @@ class snake(object):
 					self.dirnx = 0
 					self.dirny = 1
 					self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
-			
-				
 
+		#for the slither effect	
+		for i, c in enumerate(self.body):
+			p = c.pos[:]
+			if p in self.turns:
+				turn = self.turns[p]
+				#move with x and y	
+				c.move(turn[0, turn[1])	
+				#remove last turn
+				if i == len(self.body) - 1:
+					self.turns.pop(p)
+			else: 
+				#reaching the edges of the screen
+                if c.dirnx == -1 and c.pos[0] <= 0: 
+					c.pos = (c.rows-1, c.pos[1])
+                elif c.dirnx == 1 and c.pos[0] >= c.rows-1: 
+					c.pos = (0, c.pos[1])
+                elif c.dirny == 1 and c.pos[1] >= c.rows-1: 
+					c.pos= (c.pos[0], 0)
+                elif c.dirny == -1 and c.pos[1] <= 0: 
+					c.pos = (c.pos[0], c.rows-1)
+                else: 
+					#just move
+					c.move(c.dirnx, c.dirny)
 	
-	def reset(self):
-		pass
+	#resets the snake
+	def reset(self, pos):
+		self.head = cube(pos)
+		self.body = []
+		self.body.append(self.head)
+		self.turns = {}
+		self.dirnx = 0
+		self.dirny = 1
 	
 	def addCube(self):
 		self.
@@ -78,8 +113,8 @@ def drawGrid(width, rows, surface):
 		y = y + sizeOfBlock
 
 		#draw 2 lines each time (surface, color, start, end)
-		pygame.draw.line(surface, (255, 255, 255), (x, 0), (x, width))
-		pygame.draw.line(surface, (255, 255, 255), (0, y), (width, y))
+		pygame.draw.line(surface, WHITE, (x, 0), (x, width))
+		pygame.draw.line(surface, WHITE, (0, y), (width, y))
 
 
 
@@ -87,7 +122,7 @@ def drawGrid(width, rows, surface):
 def redrawWindow(surface):
 	global rows, width
 	#fills the grid with black
-	surface.fill((0,0,0))
+	surface.fill(BLACK)
 	drawGrid(width, rows, surface)
 	pygame.display.update()
 
