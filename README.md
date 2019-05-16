@@ -1,14 +1,14 @@
 # Snake
 A snake game made in Python
 
-RULES: 
+Rules: 
 
-	Use the arrow keys to move the snake
+	1. Use the arrow keys to move the snake
 	
-	Eat snacks along the way to grow in size
+	2. Eat snacks along the way to grow in size
 	
-	Don't run into yourself
+	3. Don't run into yourself
 
 Need to Fix:
 
-	Game Over Box needs to be fixed
+	Gameover Message Box crashes
