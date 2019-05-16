@@ -8,37 +8,38 @@ from tkinter import messagebox
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+GREEN = (0, 255, 0)
 
 
 class cube(object):
     row = 20
     width = 500
 
-    def __init__(self, start, dirnx = 1, dirny = 0, color = RED):
+    def __init__(self, start, dirnx=1, dirny=0, color=RED):
         self.pos = start
-		self.dirnx = 1
-		self.dirny = 0
-		self.color = color
-
+        self.dirnx = 1
+        self.dirny = 0
+        self.color = color
+	
     def move(self, dirnx, dirny):
         self.dirnx = dirnx
-		self.dirny = dirny
-		self.pos(self.pos[0] + self.dirnx, self.pos[1] + self.dirny)
-
+        self.dirny = dirny
+        self.pos(self.pos[0] + self.dirnx, self.pos[1] + self.dirny)
+        
     def draw(self, surface, eyes=False):
         dis = self.width // self.rows
-		i = self.pos[0]
-		j = self.pos[1]
+        i = self.pos[0]
+        j = self.pos[1]
 
-		pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis-2, dis-2))
-
-		if eyes: 
-			center = dis // 2
-			radius = 3 
-			circleMiddle = (i*dis+center-radius, j*dis+8)
-			circleMiddle2 = (i*dis+ dis -radius*2, j*dis+8)
-			pygame.draw.circle(surface, BLACK, circleMiddle, radius)
-			pygame.draw.circle(surface, BLACK, circleMiddle2, radius)
+        pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis-2, dis-2))
+        
+        if eyes:
+            center = dis // 2
+            radius = 3
+            circleMiddle = (i*dis+center-radius, j*dis+8)
+            circleMiddle2 = (i*dis + dis - radius*2, j*dis+8)
+            pygame.draw.circle(surface, BLACK, circleMiddle, radius)
+            pygame.draw.circle(surface, BLACK, circleMiddle2, radius)
 
 # snake object made of cube objects
 class snake(object):
@@ -114,9 +115,22 @@ class snake(object):
         self.dirny = 1
 
     def addCube(self):
-        pass
+        tail = self.body[-1]
+        dx, dy = tail.dirnx, tail.dirny
 
-    def draw(self):
+       if dx == 1 and dy == 0:
+            self.body.append(cube((tail.pos[0]-1,tail.pos[1])))
+        elif dx == -1 and dy == 0:
+            self.body.append(cube((tail.pos[0]+1,tail.pos[1])))
+        elif dx == 0 and dy == 1:
+            self.body.append(cube((tail.pos[0],tail.pos[1]-1)))
+        elif dx == 0 and dy == -1:
+            self.body.append(cube((tail.pos[0],tail.pos[1]+1)))
+        
+        self.body[-1].dirnx = dx
+        self.body[-1].dirny = dy
+
+    def draw(self, surface):
         for i, c in enumerate(self.body):
             # draw eyes if head
             if i == 0:
@@ -141,28 +155,45 @@ def drawGrid(width, rows, surface):
 
 
 def redrawWindow(surface):
-    global rows, width, s
+    global rows, width, s, snack
     # fills the grid with black
-    surface.fill(BLACK)
+    surface.fill((BLACK)
     # draw snake
     s.draw(surface)
+    # draw snack 
+    snack.draw(surface)
     # draw grid
     drawGrid(width, rows, surface)
     # update display
     pygame.display.update()
 
-
 def randomSnack(row, items):
-    pass
+    positions = item.body
+
+    while True:
+        x = random.randrange(rows)
+        y = random.randrange(rows)
+        if len(list(filter(lambda z:z.pos == (x,y), positions))) > 0:
+            continue
+        else: 
+            break
+        
+    return (x,y)
 
 
 def message_box(subject, content):
-    #messagebox(subject, content)
-    pass
+    root = tk.Tk()
+    root.attributes("-topmost", True)
+    root.withdraw()
+    messagebox.showinfo(subject, content)
+    try:
+        root.destroy()
+    except:
+        pass
 
 
 def main():
-    global width, rows, s
+    global width, rows, s, snack
     # create the board
     width = 500
     rows = 20
@@ -171,6 +202,8 @@ def main():
 
     # create the snake object
     s = snake(RED, (10, 10))
+    # create the snack 
+    snack = cube(randomSnack(rows, s), color=GREEN)
 
     # create the clock
     clock = pygame.time.Clock()
@@ -184,10 +217,20 @@ def main():
         pygame.time.delay(50)
         # lower tick = slower
         clock.tick(10)
+        s.move()
+        #snack is eaten
+        if s.body[0].pos = snack.pos:
+            s.addCube()
+            snack = cube(randomSnack(rows, s), color=GREEN)
+        
+        for x in range(len(s.body)):
+            if s.body[x].pos in list(map(lambda z:z.pos, s.body[x+1:])):
+                print("Score: ", len(s.body))
+                message_box("You Lost!", "Play Again?")
+                s.reset((10,10))
+                break
 
         redrawWindow(window)
-
-    pass
 
 
 main()
