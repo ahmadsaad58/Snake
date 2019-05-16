@@ -39,14 +39,42 @@ def drawGrid(column, row, surface):
 	pass
 
 def redrawWindow(surface):
-	pass
+	
+	pygame.display.update()
 
 def randomSnack(row, items):
 	pass
 
 def message_box(subject, content):
-	pass
+	messagebox(subject, content)
 
 def main(): 
-	#window = pygame.display
+	#create the board
+	width = 500
+	height = 500
+	rows = 20
+	#surface
+	window = pygame.display.set_mode(width, height)
+	
+	#create the snake object
+	s = snake((255, 0, 0), (10, 10))
+	
+	#create the clock
+	clock = pygame.time.Clock()
+	
+	#create the while loop
+	flag = True 
+	while flag:
+		#speed at which the snake moves
+		
+		#lower delay = faster 
+		pygame.time.delay(50)
+		#lower tick = slower 
+		clock.tick(10)
+	
+		redrawWindow(window)
+	
 	pass
+
+
+
