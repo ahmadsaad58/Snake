@@ -12,7 +12,7 @@ GREEN = (0, 255, 0)
 
 
 class cube(object):
-    row = 20
+    rows = 20
     width = 500
 
     def __init__(self, start, dirnx=1, dirny=0, color=RED):
@@ -24,7 +24,7 @@ class cube(object):
     def move(self, dirnx, dirny):
         self.dirnx = dirnx
         self.dirny = dirny
-        self.pos(self.pos[0] + self.dirnx, self.pos[1] + self.dirny)
+        self.pos = (self.pos[0] + self.dirnx, self.pos[1] + self.dirny)
         
     def draw(self, surface, eyes=False):
         dis = self.width // self.rows
@@ -117,8 +117,7 @@ class snake(object):
     def addCube(self):
         tail = self.body[-1]
         dx, dy = tail.dirnx, tail.dirny
-
-       if dx == 1 and dy == 0:
+        if dx == 1 and dy == 0:
             self.body.append(cube((tail.pos[0]-1,tail.pos[1])))
         elif dx == -1 and dy == 0:
             self.body.append(cube((tail.pos[0]+1,tail.pos[1])))
@@ -139,7 +138,7 @@ class snake(object):
                 c.draw(surface)
 
 
-def drawGrid(width, rows, surface):
+def drawGrid(surface, width, rows):
     # creates the size of the grid blocks
     sizeOfBlock = width // rows
     x = 0
@@ -153,21 +152,15 @@ def drawGrid(width, rows, surface):
         pygame.draw.line(surface, WHITE, (x, 0), (x, width))
         pygame.draw.line(surface, WHITE, (0, y), (width, y))
 
-
 def redrawWindow(surface):
     global rows, width, s, snack
-    # fills the grid with black
-    surface.fill((BLACK)
-    # draw snake
+    surface.fill(BLACK)
     s.draw(surface)
-    # draw snack 
     snack.draw(surface)
-    # draw grid
-    drawGrid(width, rows, surface)
-    # update display
+    drawGrid(surface, width, rows)
     pygame.display.update()
 
-def randomSnack(row, items):
+def randomSnack(row, item):
     positions = item.body
 
     while True:
@@ -179,7 +172,6 @@ def randomSnack(row, items):
             break
         
     return (x,y)
-
 
 def message_box(subject, content):
     root = tk.Tk()
@@ -219,7 +211,7 @@ def main():
         clock.tick(10)
         s.move()
         #snack is eaten
-        if s.body[0].pos = snack.pos:
+        if s.body[0].pos == snack.pos:
             s.addCube()
             snack = cube(randomSnack(rows, s), color=GREEN)
         
